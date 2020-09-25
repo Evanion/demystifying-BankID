@@ -1,17 +1,73 @@
 {
   "version": 1,
   "projects": {
-    "chronos": {
-      "root": "apps/chronos",
-      "sourceRoot": "apps/chronos",
+    "api-gateway": {
+      "root": "apps/api-gateway",
+      "sourceRoot": "apps/api-gateway/src",
+      "projectType": "application",
+      "prefix": "api-gateway",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/node:build",
+          "options": {
+            "outputPath": "dist/apps/api-gateway",
+            "main": "apps/api-gateway/src/main.ts",
+            "tsConfig": "apps/api-gateway/tsconfig.app.json",
+            "assets": ["apps/api-gateway/src/assets"]
+          },
+          "configurations": {
+            "production": {
+              "optimization": true,
+              "extractLicenses": true,
+              "inspect": false,
+              "fileReplacements": [
+                {
+                  "replace": "apps/api-gateway/src/environments/environment.ts",
+                  "with": "apps/api-gateway/src/environments/environment.prod.ts"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/node:execute",
+          "options": {
+            "buildTarget": "api-gateway:build"
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/api-gateway/tsconfig.app.json",
+              "apps/api-gateway/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/api-gateway/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/api-gateway/jest.config.js",
+            "tsConfig": "apps/api-gateway/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "frontend": {
+      "root": "apps/frontend",
+      "sourceRoot": "apps/frontend",
       "projectType": "application",
       "schematics": {},
       "architect": {
         "build": {
           "builder": "@nrwl/next:build",
           "options": {
-            "root": "apps/chronos",
-            "outputPath": "dist/apps/chronos"
+            "root": "apps/frontend",
+            "outputPath": "dist/apps/frontend"
           },
           "configurations": {
             "production": {}
@@ -20,12 +76,12 @@
         "serve": {
           "builder": "@nrwl/next:server",
           "options": {
-            "buildTarget": "chronos:build",
+            "buildTarget": "frontend:build",
             "dev": true
           },
           "configurations": {
             "production": {
-              "buildTarget": "chronos:build:production",
+              "buildTarget": "frontend:build:production",
               "dev": false
             }
           }
@@ -33,7 +89,7 @@
         "export": {
           "builder": "@nrwl/next:export",
           "options": {
-            "buildTarget": "chronos:build:production"
+            "buildTarget": "frontend:build:production"
           }
         },
         "lint": {
@@ -41,37 +97,37 @@
           "options": {
             "linter": "eslint",
             "tsConfig": [
-              "apps/chronos/tsconfig.json",
-              "apps/chronos/tsconfig.spec.json"
+              "apps/frontend/tsconfig.json",
+              "apps/frontend/tsconfig.spec.json"
             ],
-            "exclude": ["**/node_modules/**", "!apps/chronos/**/*"]
+            "exclude": ["**/node_modules/**", "!apps/frontend/**/*"]
           }
         },
         "test": {
           "builder": "@nrwl/jest:jest",
           "options": {
-            "jestConfig": "apps/chronos/jest.config.js",
-            "tsConfig": "apps/chronos/tsconfig.spec.json",
+            "jestConfig": "apps/frontend/jest.config.js",
+            "tsConfig": "apps/frontend/tsconfig.spec.json",
             "passWithNoTests": true
           }
         }
       }
     },
-    "chronos-e2e": {
-      "root": "apps/chronos-e2e",
-      "sourceRoot": "apps/chronos-e2e/src",
+    "frontend-e2e": {
+      "root": "apps/frontend-e2e",
+      "sourceRoot": "apps/frontend-e2e/src",
       "projectType": "application",
       "architect": {
         "e2e": {
           "builder": "@nrwl/cypress:cypress",
           "options": {
-            "cypressConfig": "apps/chronos-e2e/cypress.json",
-            "tsConfig": "apps/chronos-e2e/tsconfig.e2e.json",
-            "devServerTarget": "chronos:serve"
+            "cypressConfig": "apps/frontend-e2e/cypress.json",
+            "tsConfig": "apps/frontend-e2e/tsconfig.e2e.json",
+            "devServerTarget": "frontend:serve"
           },
           "configurations": {
             "production": {
-              "devServerTarget": "chronos:serve:production"
+              "devServerTarget": "frontend:serve:production"
             }
           }
         },
@@ -79,8 +135,142 @@
           "builder": "@nrwl/linter:lint",
           "options": {
             "linter": "eslint",
-            "tsConfig": ["apps/chronos-e2e/tsconfig.e2e.json"],
-            "exclude": ["**/node_modules/**", "!apps/chronos-e2e/**/*"]
+            "tsConfig": ["apps/frontend-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/frontend-e2e/**/*"]
+          }
+        }
+      }
+    },
+    "presentation": {
+      "root": "apps/presentation",
+      "sourceRoot": "apps/presentation/src",
+      "projectType": "application",
+      "schematics": {},
+      "architect": {
+        "build": {
+          "builder": "@nrwl/web:build",
+          "options": {
+            "outputPath": "dist/apps/presentation",
+            "index": "apps/presentation/src/index.html",
+            "main": "apps/presentation/src/main.tsx",
+            "polyfills": "apps/presentation/src/polyfills.ts",
+            "tsConfig": "apps/presentation/tsconfig.app.json",
+            "assets": [
+              "apps/presentation/src/favicon.ico",
+              "apps/presentation/src/assets"
+            ],
+            "styles": [],
+            "scripts": [],
+            "webpackConfig": "@nrwl/react/plugins/webpack"
+          },
+          "configurations": {
+            "production": {
+              "fileReplacements": [
+                {
+                  "replace": "apps/presentation/src/environments/environment.ts",
+                  "with": "apps/presentation/src/environments/environment.prod.ts"
+                }
+              ],
+              "optimization": true,
+              "outputHashing": "all",
+              "sourceMap": false,
+              "extractCss": true,
+              "namedChunks": false,
+              "extractLicenses": true,
+              "vendorChunk": false,
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
+                }
+              ]
+            }
+          }
+        },
+        "serve": {
+          "builder": "@nrwl/web:dev-server",
+          "options": {
+            "buildTarget": "presentation:build"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "presentation:build:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "apps/presentation/tsconfig.app.json",
+              "apps/presentation/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!apps/presentation/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "apps/presentation/jest.config.js",
+            "tsConfig": "apps/presentation/tsconfig.spec.json",
+            "passWithNoTests": true
+          }
+        }
+      }
+    },
+    "presentation-e2e": {
+      "root": "apps/presentation-e2e",
+      "sourceRoot": "apps/presentation-e2e/src",
+      "projectType": "application",
+      "architect": {
+        "e2e": {
+          "builder": "@nrwl/cypress:cypress",
+          "options": {
+            "cypressConfig": "apps/presentation-e2e/cypress.json",
+            "tsConfig": "apps/presentation-e2e/tsconfig.e2e.json",
+            "devServerTarget": "presentation:serve"
+          },
+          "configurations": {
+            "production": {
+              "devServerTarget": "presentation:serve:production"
+            }
+          }
+        },
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": ["apps/presentation-e2e/tsconfig.e2e.json"],
+            "exclude": ["**/node_modules/**", "!apps/presentation-e2e/**/*"]
+          }
+        }
+      }
+    },
+    "bankid": {
+      "root": "libs/bankid",
+      "sourceRoot": "libs/bankid/src",
+      "projectType": "library",
+      "schematics": {},
+      "architect": {
+        "lint": {
+          "builder": "@nrwl/linter:lint",
+          "options": {
+            "linter": "eslint",
+            "tsConfig": [
+              "libs/bankid/tsconfig.lib.json",
+              "libs/bankid/tsconfig.spec.json"
+            ],
+            "exclude": ["**/node_modules/**", "!libs/bankid/**/*"]
+          }
+        },
+        "test": {
+          "builder": "@nrwl/jest:jest",
+          "options": {
+            "jestConfig": "libs/bankid/jest.config.js",
+            "tsConfig": "libs/bankid/tsconfig.spec.json",
+            "passWithNoTests": true
           }
         }
       }
@@ -92,7 +282,16 @@
   "schematics": {
     "@nrwl/react": {
       "application": {
+        "style": "@emotion/styled",
+        "linter": "eslint",
         "babel": true
+      },
+      "component": {
+        "style": "@emotion/styled"
+      },
+      "library": {
+        "style": "@emotion/styled",
+        "linter": "eslint"
       }
     },
     "@nrwl/next": {
@@ -102,5 +301,5 @@
       }
     }
   },
-  "defaultProject": "chronos"
+  "defaultProject": "frontend"
 }

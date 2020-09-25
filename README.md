@@ -1,4 +1,8 @@
-# Regent
+# Chronos
+This is a demo project on working with nx monorepo, Nest.js microservice framework, Next.js, and integrating with Bankid
+
+## Install BankID test certificate
+`sudo security import FPTestcert2_20150818_102329.pfx -k /Library/Keychains/System.keychain -P qwerty123`
 
 This project was generated using [Nx](https://nx.dev).
 
@@ -43,7 +47,7 @@ Run `nx g @nrwl/react:lib my-lib` to generate a library.
 
 > You can also use any of the plugins above to generate libraries as well.
 
-Libraries are sharable across libraries and applications. They can be imported from `@regent/mylib`.
+Libraries are sharable across libraries and applications. They can be imported from `@chronos/mylib`.
 
 ## Development server
 

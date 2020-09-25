@@ -1,5 +1,5 @@
 {
-  "npmScope": "regent",
+  "npmScope": "chronos",
   "affected": {
     "defaultBase": "master"
   },
@@ -22,12 +22,25 @@
     }
   },
   "projects": {
-    "chronos": {
+    "api-gateway": {
       "tags": []
     },
-    "chronos-e2e": {
+    "frontend": {
+      "tags": []
+    },
+    "frontend-e2e": {
       "tags": [],
-      "implicitDependencies": ["chronos"]
+      "implicitDependencies": ["frontend"]
+    },
+    "presentation": {
+      "tags": []
+    },
+    "presentation-e2e": {
+      "tags": [],
+      "implicitDependencies": ["presentation"]
+    },
+    "bankid": {
+      "tags": []
     }
   }
 }
